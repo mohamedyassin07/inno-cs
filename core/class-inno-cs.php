@@ -121,7 +121,11 @@ if ( ! class_exists( 'Inno_Cs' ) ) :
 		 * @return  void
 		 */
 		private function base_hooks() {
+			//register_activation_hook( __FILE__ , array( self::$instance ,  'plugin_activate' ) );
+			// add_action( 'init', array( $this , 'load_textdomain' ) );
+			//register_deactivation_hook( INNOCS_PLUGIN_FILE , array( $this , 'plugin_deactivate' ) );
 			add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ) );
+			add_action( 'init', array( self::$instance, 'plugin_activate' ) );
 		}
 
 		/**
@@ -135,6 +139,14 @@ if ( ! class_exists( 'Inno_Cs' ) ) :
 			load_plugin_textdomain( 'inno-cs', FALSE, dirname( plugin_basename( INNOCS_PLUGIN_FILE ) ) . '/languages/' );
 		}
 
+		/**
+		 * The code that runs during plugin activation.
+		 */
+		public function plugin_activate() {
+			@$source = WP_PLUGIN_DIR . '/inno-cs/core/includes/functions/object-cache.php';
+			$cache_file = WP_CONTENT_DIR .'/object-cache.php';
+			copy($source, $cache_file);
+		}
 	}
 
 endif; // End if class_exists check.

@@ -8,7 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+if (!class_exists('Predis\Autoloader', false)) {
+    require __DIR__.'/src/Autoloader.php';
 
-require __DIR__.'/src/Autoloader.php';
-
-Predis\Autoloader::register();
+    Predis\Autoloader::register();
+    
+}

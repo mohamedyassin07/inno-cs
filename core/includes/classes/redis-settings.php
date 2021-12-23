@@ -56,7 +56,6 @@ class Redis_Settings{
 	
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'settings_init') );
-		
 	}
 
 	/**
@@ -78,7 +77,7 @@ class Redis_Settings{
 	* @return	array	An array of plugin action links.
 	*/
 	public function add_plugin_action_link( $links ) {
-		$settings_link = '#';
+		$settings_link = get_admin_url( 1 , 'admin.php?page=inno_cs');
 		$new_links['settings'] = sprintf( '<a href="%s" title="Settings" style="font-weight:700;">%s</a>', $settings_link, __( 'Redis Settings', 'inno-cs' ) );
 		$links = array_merge( $new_links, $links );
 		return $links;
@@ -135,7 +134,7 @@ class Redis_Settings{
 			$this->settings_page_slug
 		);
 	
-		$fields = array('scheme','host','port');
+		$fields = array( 'scheme', 'host', 'port', 'prefix' );
 		foreach ($fields as $field) {
 			add_settings_field(
 				'redis_server_'.$field,
@@ -165,7 +164,7 @@ class Redis_Settings{
 		}
 
 		if(  is_object($this->redis_instance) ){
-			echo __( 'Redis is working correctly', 'inno-cs' );
+			echo __( '------------ Redis is working correctly ------------', 'inno-cs' );
 		}
 
 	}
@@ -193,11 +192,14 @@ class Redis_Settings{
 		<?php
 	}
 
-	public function redis_server_connection_actions_field(){ ?>
+	public function redis_server_connection_actions_field(){ 
+		if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+			echo __('please install/activate woocommerce first');
+		}else {	?>
 	<a onClick="redis_action_request('redis_store_products')" class="button button-primary"><?= __( 'Store All Data', 'inno-cs' ); ?></a>
 	<a onClick="redis_action_request('redis_flush_data')" class="button button-primary"><?= __( 'Flush All Data', 'inno-cs' ); ?></a>
 	<p id='redis_actions_result'></p>
-	<?php }
+	<?php } }
 	
 	public function redis_instance(){
 		$this->redis_instance =  Redis_Connection::instance();

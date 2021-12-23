@@ -22,14 +22,18 @@ class Redis_Connection{
 		$port 	= get_option( 'redis_server_port' );
 		$prefix = get_option( 'redis_server_prefix' );
 
-		if( $scheme && $host && $port && $prefix ){
+		if( $scheme && $host && $port ){
 			try {
 				require_once INNOCS_PLUGIN_DIR . 'core/includes/libs/predis/autoload.php';
-				$client =  new Predis\Client([
-					'scheme' => $scheme ,
-					'host'   => $host,
-					'port'   => $port ,
-				]);
+					$client =  new Predis\Client([
+						'scheme' => $scheme ,
+						'host'   => $host,
+						'port'   => $port ,
+					],
+					[
+						'prefix' => $prefix,
+					]
+				);
 	
 				if ( $client->ping() == 'PONG' ) {
 					return $client;
@@ -40,7 +44,6 @@ class Redis_Connection{
 			}
 
 		}else {
-			return "am in";
 			return __('Please Fill All Data Correctly' , 'inno-cs' );
 		}
 	}
